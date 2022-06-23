@@ -1,0 +1,24 @@
+db:
+  host: postgres-auth
+  port: 5432
+  user: postgres
+  password: postgres
+  db_name: postgres
+  timeout: 5
+server:
+  port: 3000
+  shutdown_timeout: 60
+redis:
+  host: redis
+  port: 6379
+  username: redis
+  password: redis
+  db: 0
+token:
+  access_token:
+    time_to_live: 10000
+    secret: asdasdasdasdasdasdasd
+  refresh_token:
+    time_to_live: 10000000
+    long_time_to_live: 100000000
+    secret: adsadasdasfggthtrhyj

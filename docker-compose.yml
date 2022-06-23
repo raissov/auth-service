@@ -1,0 +1,47 @@
+version: '3'
+services:
+  postgres:
+    container_name: postgres-auth
+    image: postgres:11-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres-vol:/var/lib/postgresql/data
+      - ./postgres-back/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
+    networks:
+      - users-auth
+  redis:
+    container_name: redis
+    image: redis:alpine
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    volumes:
+      - ./config/redis.conf:/etc/redis/redis.conf
+      - ./config/users.acl:/etc/redis/users.acl
+    ports:
+      - 6379:6379
+    networks:
+      - users-auth
+
+  myapp:
+    container_name: auth-service
+    ports:
+      - 3000:3000
+    build:
+      context: ./
+      dockerfile: build/Dockerfile
+    restart: always
+    networks:
+      - users-auth
+    volumes:
+      - ./config/config.yaml:/app/config.yaml:ro
+    environment:
+      - APP_MODE=dev
+networks:
+  users-auth:
+    driver: bridge
+volumes:
+  postgres-vol:
